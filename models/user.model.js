@@ -22,16 +22,24 @@ const UserSchema = new Schema({
     // }
 });
 
-// UserSchema.pre('save', async function (next) {
-//     try {
-//         const salt = await bcrypt.genSalt(10)
-//         const hashedPassword = await bcrypt.hash(this.password, this.email, salt)
-//         this.password = hashedPassword
-//         next()
-//     } catch (error) {
-//         next(error)        
-//     }
-// });
+UserSchema.pre('save', async function (next) {
+    try {
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(this.password, this.email, salt)
+        this.password = hashedPassword
+        next()
+    } catch (error) {
+        next(error)        
+    }
+});
+
+UserSchema.methods.isValidPassword = async function (password) {
+    try {
+        return await bcrypt.compare(password, this.password)
+    } catch (error) {
+        next(error)
+    }
+}
 
 const User = mongoose.model('user', UserSchema);
 

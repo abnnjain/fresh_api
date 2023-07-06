@@ -37,7 +37,11 @@ module.exports = {
 
     login: async(req,res,next) => {
         try {
-            
+            const result = await authSchema.validateAsync(req.body); //taking the input
+            const user = await User.findOne({email: result.email}) //checking the email in db
+            if(!user) throw new Error (`${result.email} NOT FOUND`); 
+            const isMatch = await user.isValidPassword(result.password) //verifying the password from db
+            if(!isMatch) throw res.send('Password not Vaid')/*createError.Unauthorized('Password not valid')*/
         } catch (error) {
             next(error);
         }
