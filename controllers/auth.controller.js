@@ -6,23 +6,23 @@ module.exports = {
         try {
             const result = await (req.body);
             console.log(result);
-            // const doesExist = await User.findOne({email: result.email});
-            // if (doesExist) throw new Error(`${result.email} has already been registered login with this email`);
-            // function base64_encode(file) {
-            //     // read binary data
-            //     const bitmap = fs.readFileSync(file);
-            //     // convert binary data to base64 encoded string
-            //     return Buffer.from(bitmap).toString('base64');
-            // }
-            // var base64str = base64_encode({profileImage: result.profileImage});
-            // const stringDocument = new User({ stringField: base64str });
-            // await stringDocument.save()
-            // .then((stringDocument) => {
-            //     console.log('String image saved:', stringDocument.id);
-            // })
-            // .catch((error) => {
-            //     console.error('Error saving string:', error);
-            // });
+            const doesExist = await User.findOne({email: result.email});
+            if (doesExist) throw new Error(`${result.email} has already been registered login with this email`);
+            function base64_encode(file) {
+                // read binary data
+                const bitmap = fs.readFileSync(file);
+                // convert binary data to base64 encoded string
+                return Buffer.from(bitmap).toString('base64');
+            }
+            var base64str = base64_encode({profileImage: result.profileImage});
+            const stringDocument = new User({ stringField: base64str });
+            await stringDocument.save()
+            .then((stringDocument) => {
+                console.log('String image saved:', stringDocument.id);
+            })
+            .catch((error) => {
+                console.error('Error saving string:', error);
+            });
             const user = new User (result);
             const savedUser = await user.save();
             if (user){
