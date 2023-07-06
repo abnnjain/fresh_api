@@ -42,6 +42,10 @@ module.exports = {
             if(!user) throw new Error (`${result.email} NOT FOUND`); 
             const isMatch = await user.isValidPassword(result.password) //verifying the password from db
             if(!isMatch) throw res.send('Password not Vaid')/*createError.Unauthorized('Password not valid')*/
+            if (user){
+                return res.send({success: true, data: user, message: "user login successfully"})
+            }
+            return res.send({success : false, message: "error something"})
         } catch (error) {
             next(error);
         }
