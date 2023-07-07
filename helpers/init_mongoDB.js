@@ -1,18 +1,23 @@
 const mongoose = require('mongoose');
 const { buffer } = require('stream/consumers');
 
+try {
 //eastablishing mongoose connection
-mongoose.connect('mongodb://127.0.0.1:27017',{
-    dbName: 'test_api',
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    // useFindAndModify: false,
-    // useCreateIndex: true
-})
-.then(()=>{
-    console.log('mongodb connected')
-})
-.catch((err)=> console.log(err.message));
+mongoose.connect('mongodb://127.0.0.1:27017', {
+  dbName: 'fresh_api',
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000,
+  // useFindAndModify: false,
+  // useCreateIndex: true
+})    
+} catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+}
+// .then(()=>{
+//     console.log('mongodb connected')
+// })
+// .catch((err)=> console.log(err.message));
 
 //when mongoose connected
 mongoose.connection.on('connected', ()=>{
