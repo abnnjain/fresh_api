@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <!-- Include your CSS files here -->
+  <link rel="stylesheet" href="../../public/styles/admin-dashboard.css">
+  <style>
+    /* Reset default styles */
+body, h1, h2, p, ul, li {
+    margin: 10px;
+    padding: 10px;
+  }
+  /* Overall styles */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+  }
+  header {
+    background-color: #333;
+    padding: 20px;
+    color: #fff;
+  }
+  header h1 {
+    margin: 0;
+  }
+  nav ul {
+    list-style-type: none;
+    margin: 10px 0;
+    padding: 0;
+  }
+  nav ul li {
+    display: inline;
+    margin-right: 10px;
+  }
+  nav ul li a {
+    color: #fff;
+    text-decoration: none;
+  }
+  main {
+    padding: 50px;
+  }
+  footer {
+    background-color: #333;
+    padding: 10px;
+    color: #fff;
+    text-align: center;
+  }
+  
+  </style>
+</head>
+<body>
+  <header align="center">
+    <!-- Header content goes here -->
+    <h1>Welcome to the Admin Dashboard</h1>
+    <nav>
+      <ul>
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin/users">Users</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main align="center">
+    <!-- Main content goes here -->
+    <h2>Dashboard Overview</h2>
+    <h2 margin-top= "50px">Users List</h2>
+  <table id="user-list" align="center" width="50%"  margin = "50px" padding="50px">
+    <thead>
+      <tr>
+        <th>S.No.</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Profile Image</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% users.forEach((user,index) => { %>      
+       <tr>
+        <td> <%= index + 1 %> </td>
+        <td> <%= user.name %> </td> 
+        <td> <%= user.email %> </td> 
+        <td> <%= user.profileImage %> </td> 
+       </tr>
+    <% }); %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>S.No.</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Profile Image</th>
+      </tr>
+    </tfoot>
+  </table>
+  <br><br>
+  <button><a id="download-link" href="/admin/users/download">Download User List</a></button>
+  </main>
+
+  <footer align="center">
+    <!-- Footer content goes here -->
+    <p>&copy; 2023 Admin Dashboard. All rights reserved.</p>
+  </footer>
+
+  <!-- Include your JavaScript files here -->
+  <script src="../../public/scripts/admin-dashboard.js"></script>
+</body>
+</html>

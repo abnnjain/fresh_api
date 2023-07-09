@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+require('../helpers/init_mongoDB');
 const bcrypt = require('bcrypt')
 
 const UserSchema = new Schema({
@@ -24,28 +25,18 @@ const UserSchema = new Schema({
 
 UserSchema.pre('save', async function (next) {
     try {
-      const salt = await bcrypt.genSalt(10);
-    //   const hashedEmail = await bcrypt.hash(this.email, salt);
-      const hashedPassword = await bcrypt.hash(this.password, salt);
-    //   this.email = hashedEmail;
-      this.password = hashedPassword;
-      next();
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(this.password, salt);
+        this.password = hashedPassword;
+        next();
     } catch (error) {
       next(error);
     }
   });
 
-UserSchema.methods.isValidEmail = async function (email) {
-    try {
-        await bcrypt.compare(email, this.email)
-        if (email === this.email) return true
-    } catch (error) {
-        next(error)
-    }
-};
-
 UserSchema.methods.isValidPassword = async function (password) {
     try {
+        console.log(password, "=> isValidPassword");
         return await bcrypt.compare(password, this.password)
     } catch (error) {
         next(error)
@@ -54,4 +45,4 @@ UserSchema.methods.isValidPassword = async function (password) {
 
 const User = mongoose.model('user', UserSchema);
 
-module.exports = User
+module.exports = User;
