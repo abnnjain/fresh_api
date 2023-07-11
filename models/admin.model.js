@@ -19,7 +19,7 @@ const adminUserSchema = new Schema({
         required: true
     },
     profileImage:{
-        value: String,
+        type: String,
     }
 });
 

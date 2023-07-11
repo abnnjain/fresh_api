@@ -65,6 +65,10 @@ body, h1, h2, p, ul, li {
     <!-- Main content goes here -->
     <h2>Dashboard Overview</h2>
     <h2 margin-top= "50px">Users List</h2>
+    <form action="/admin/users" method="GET">
+      <input type="text" name="search" placeholder="Search users..." value="<%= searchTerm %>">
+      <button type="submit">Search</button>
+    </form>
   <table id="user-list" align="center" width="50%"  margin = "50px" padding="50px">
     <thead>
       <tr>
@@ -75,14 +79,18 @@ body, h1, h2, p, ul, li {
       </tr>
     </thead>
     <tbody>
-    <% users.forEach((user,index) => { %>      
-       <tr>
-        <td> <%= index + 1 %> </td>
-        <td> <%= user.name %> </td> 
-        <td> <%= user.email %> </td> 
-        <td> <%= user.profileImage %> </td> 
-       </tr>
-    <% }); %>
+      <% usersOnCurrentPage.forEach((user, index) => { %>
+        <tr>
+          <td><%= (pagination.currentPage - 1) * pagination.usersPerPage + index + 1 %></td>
+          <td><%= user.name %></td>
+          <td><%= user.email %></td>
+          <td> <% if (user.profileImage) { %>
+            <img src="../../uploads/images/<%= user.profileImage %>" alt="Profile Image" width="50px">
+          <% } else { %>
+            No Image Available
+          <% } %> </td> 
+        </tr>
+      <% }); %>
     </tbody>
     <tfoot>
       <tr>
@@ -94,6 +102,15 @@ body, h1, h2, p, ul, li {
     </tfoot>
   </table>
   <br><br>
+  <br><br>
+  <% if (pagination.hasPrevPage) { %>
+    <a href="?page=<%= pagination.currentPage - 1 %>">Previous Page</a>
+  <% } %>
+  <span>Page <%= pagination.currentPage %> of <%= pagination.totalPages %></span>
+  <% if (pagination.hasNextPage) { %>
+    <a href="?page=<%= pagination.currentPage + 1 %>">Next Page</a>
+  <% } %>
+  <br><br>
   <button><a id="download-link" href="/admin/users/download">Download User List</a></button>
   </main>
 
@@ -103,6 +120,42 @@ body, h1, h2, p, ul, li {
   </footer>
 
   <!-- Include your JavaScript files here -->
-  <script src="../../public/scripts/admin-dashboard.js"></script>
+  <script> /*src="../../public/scripts/admin-dashboard.js"*/
+     // Attach an event listener to the search form
+  document.getElementById('search-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+    
+    const searchInput = document.getElementById('search-input');
+    const searchQuery = searchInput.value.trim(); // Get the search query from the input field
+    
+    // Send an AJAX request to the server with the search query
+    fetch(`/admin/users?search=${encodeURIComponent(searchQuery)}`)
+      .then(response => response.json())
+      .then(data => {
+        // Update the user list with the search results
+        const userListBody = document.querySelector('#user-list tbody');
+        userListBody.innerHTML = '';
+
+        data.users.forEach((user, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${(data.currentPage - 1) * data.usersPerPage + index + 1}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.profileImage}</td>
+          `;
+          userListBody.appendChild(row);
+        });
+
+        // Update the pagination section with the updated pagination data
+        const paginationSection = document.querySelector('#user-list + br + span');
+        paginationSection.textContent = `Page ${data.currentPage} of ${data.totalPages}`;
+      })
+      .catch(error => {
+        console.error('Error searching users:', error);
+        // Handle error scenario
+      });
+  });
+  </script>
 </body>
 </html>

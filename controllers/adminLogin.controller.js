@@ -39,6 +39,49 @@ module.exports = {
         }
     },
 
+    getUsers: async (req, res, next) => {
+      try {
+        const searchTerm = req.query.search || ''; // Retrieve the search term from the query parameter
+        const regex = new RegExp(searchTerm, 'i'); // Create a case-insensitive regular expression for the search term
+    
+        const usersList = await User.find({ $or: [{ name: regex }, { email: regex }] }); // Fetch user data from the database based on the search term
+    
+        // Define the number of users to display per page
+        const usersPerPage = 5;
+    
+        // Retrieve the page number from the request query parameters
+        const currentPage = parseInt(req.query.page) || 1;
+    
+        // Calculate the starting and ending indices for the current page
+        const startIndex = (currentPage - 1) * usersPerPage;
+        const endIndex = startIndex + usersPerPage;
+    
+        // Retrieve the users for the current page
+        const usersOnCurrentPage = usersList.slice(startIndex, endIndex);
+    
+        // Construct the pagination metadata
+        const totalPages = Math.ceil(usersList.length / usersPerPage);
+        const pagination = {
+          currentPage,
+          totalPages,
+          hasPrevPage: currentPage > 1,
+          hasNextPage: currentPage < totalPages
+        };
+    
+        // Render the admin/dashboard view and pass the users data
+        res.render('admin/dashboard', {
+          usersList,
+          usersOnCurrentPage,
+          pagination,
+          searchTerm
+        });
+      } catch (error) {
+        console.error('Error retrieving users:', error);
+        res.status(500).send('Error retrieving users');
+      }
+    },
+    
+    
     login: async (req,res,next) => {
         try {
             const result = /*req.body*/ {
@@ -59,17 +102,6 @@ module.exports = {
         } catch (error) {
             console.error("Error occurred during logging in:", error);
       return res.status(500).send({ success: false, message: "Error occurred during logging in" });
-        }
-    },
-
-    getUsers: async(req,res,next) => {
-        try {
-            const users = await User.find(); // Fetch user data from the database
-            console.log(users); // Log the retrieved user data
-            res.render('admin/dashboard', { users }); // Render the admin dashboard view and pass the users data
-        }catch (error) {
-            console.error('Error retrieving users:', error);
-            res.status(500).send('Error retrieving users');
         }
     },
 
